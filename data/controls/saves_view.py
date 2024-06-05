@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Callable
 
 import flet as ft
 
@@ -7,46 +7,27 @@ from data.controls.world_tile import WorldTile
 from data.controls.version_tile import VersionTile
 
 
-class SavesView(ft.Column):
-    def __init__(self, save: McSave) -> None:
-        super().__init__(expand=True)
+class SavesView(ft.ExpansionTile):
+    def __init__(self, save: McSave, on_world_clicked: Callable) -> None:
+        super().__init__()
+        self.title = ft.Text(save.name)
         self.controls = [
-            ft.Text(
-                spans=[
-                    ft.TextSpan(
-                        save.name,
-                        on_click=self.hide,
-                        style=ft.TextStyle(weight=ft.FontWeight.BOLD, size=20),
-                    )
-                ]
-            ),
-            ft.Column(
-                [
-                    *self.render_items(save),
-                ],
-                expand=True,
-                scroll=ft.ScrollMode.AUTO,
-            ),
+            *self.render_items(save, on_world_clicked),
         ]
 
-    def hide(self, e):
-        for control in self.controls[1].controls:
-            if isinstance(control, ft.Text):
-                continue
-            control.visible = not control.visible
-        self.update()
-
-    def render_items(self, save: McSave) -> list[Union[WorldTile, VersionTile]]:
+    def render_items(
+        self, save: McSave, on_world_clicked: Callable
+    ) -> list[Union[WorldTile, VersionTile]]:
         result: list[Union[WorldTile, VersionTile]] = []
         for item in save.items:
-            if converted := self.convertItem(item):
+            if converted := self.convertItem(item, on_world_clicked):
                 result.append(converted)
         return result
 
     def convertItem(
-        self, item: Union[McVersion, McWorld]
+        self, item: Union[McVersion, McWorld], on_world_clicked: Callable
     ) -> Union[WorldTile, VersionTile, None]:
         if isinstance(item, McWorld):
-            return WorldTile(item)
+            return WorldTile(item, on_world_clicked)
         if isinstance(item, McVersion):
-            return VersionTile(item)
+            return VersionTile(item, on_world_clicked)
