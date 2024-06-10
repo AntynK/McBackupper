@@ -2,11 +2,11 @@ from typing import Callable
 import flet as ft
 
 from data.backups import Backup
-from data.utils import convert_timestamp
+from data.path_utils import convert_timestamp
 
 
 class BackupDataRow(ft.DataRow):
-    def __init__(self, backup: Backup, on_select_changed: Callable):
+    def __init__(self, backup: Backup, on_select_changed: Callable) -> None:
         super().__init__()
         self.on_select_changed = lambda e: on_select_changed(backup)
         self.cells = [

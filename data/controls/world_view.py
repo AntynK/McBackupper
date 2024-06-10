@@ -7,7 +7,7 @@ from data.controls.clickable_text import ClickableText
 
 
 class WorldView(ft.Column):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.page = page
         self.world_name_text = ft.Text(weight=ft.FontWeight.BOLD, size=20)
@@ -18,7 +18,7 @@ class WorldView(ft.Column):
         self.backups_view = BackupsEditor(page)
         self.controls = [self.world_name_text, self.world_path_text, self.backups_view]
 
-    def change_world(self, world: McWorld):
+    def change_world(self, world: McWorld) -> None:
         self.world_name_text.value = world.name
         self.world_path_text.text = str(world.path)
         self.backups_view.change_world(world)

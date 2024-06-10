@@ -7,8 +7,9 @@ from data.controls.backup_data_row import BackupDataRow
 
 
 class BackupsView(ft.DataTable):
-    def __init__(self, on_select_changed: Callable):
+    def __init__(self, on_select_changed: Callable) -> None:
         super().__init__()
+
         self.border = ft.Border(
             ft.BorderSide(1),
             ft.BorderSide(1),
@@ -25,11 +26,11 @@ class BackupsView(ft.DataTable):
         self.backups: list[Backup] = []
         self.on_select_changed = on_select_changed
 
-    def set_backups(self, backups: list[Backup]):
+    def set_backups(self, backups: list[Backup]) -> None:
         self.backups = backups
         self.update_table()
 
-    def update_table(self):
+    def update_table(self) -> None:
         self.rows.clear()
         for backup in self.backups:
             self.rows.append(BackupDataRow(backup, self.on_select_changed))

@@ -1,9 +1,6 @@
 import sys
 import subprocess
 from pathlib import Path
-from datetime import datetime
-
-TIME_FORMAT = "%Y.%m.%d %H-%M-%S"
 
 
 def open_with_explorer(path: Path) -> None:
@@ -15,7 +12,7 @@ def open_with_explorer(path: Path) -> None:
         subprocess.Popen(["xdg-open", path])
 
 
-def get_mc_folder() -> Path:
+def get_default_mc_folder() -> Path:
     base_path = Path().home()
     if sys.platform == "win32":
         return base_path.joinpath("AppData", "Roaming", ".minecraft")
@@ -25,17 +22,5 @@ def get_mc_folder() -> Path:
         return base_path.joinpath(".minecraft")
 
 
-def get_rel_path(path: Path) -> Path:
-    return path.relative_to(get_mc_folder())
-
-
-def get_backups_folder() -> Path:
-    return Path("backups")
-
-
-def convert_world_path_to_backup(path: Path):
-    return get_backups_folder().joinpath(get_rel_path(path))
-
-
-def convert_timestamp(timestamp: int) -> str:
-    return datetime.fromtimestamp(timestamp).strftime(TIME_FORMAT)
+DEFAULT_MC_FOLDER = get_default_mc_folder()
+DEFAULT_BACKUPS_FOLDER = Path("backups")

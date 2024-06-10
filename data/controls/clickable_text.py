@@ -9,7 +9,7 @@ class ClickableText(ft.Text):
         on_click: Callable,
         size: Optional[int] = None,
         italic: Optional[bool] = None,
-    ):
+    ) -> None:
         super().__init__()
         self.spans: list[ft.TextSpan] = [
             ft.TextSpan(
@@ -19,9 +19,9 @@ class ClickableText(ft.Text):
         ]
 
     @property
-    def text(self):
+    def text(self) -> str:
         return self.data
 
     @text.setter
-    def text(self, text: str):
+    def text(self, text: str) -> None:
         self.spans[0].text = text

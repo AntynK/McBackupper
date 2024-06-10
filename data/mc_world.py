@@ -26,10 +26,10 @@ class McVersion:
         self.load_worlds()
 
     @staticmethod
-    def check_folder(folder: Path):
-        return folder.joinpath("saves").exists()
+    def check_folder(folder: Path) -> bool:
+        return folder.joinpath("saves").is_dir()
 
-    def load_worlds(self):
+    def load_worlds(self) -> None:
         for world_path in self.path.joinpath("saves").iterdir():
             world_path = self.path.joinpath(world_path)
             if McWorld.check_folder(world_path):
@@ -44,7 +44,9 @@ class McSave:
         self.items: list[Union[McVersion, McWorld]] = []
         self.name = name
 
-    def load_from_path(self, path: Path):
+    def load_from_path(self, path: Path) -> None:
+        if not path.is_dir():
+            return
         for item in path.iterdir():
             item = path.joinpath(item)
             if loaded := self.load_item(item):

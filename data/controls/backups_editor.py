@@ -9,7 +9,7 @@ from data.dialogs.create_backup import CreateBackupDialog
 
 
 class BackupsEditor(ft.Column):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.page: ft.Page = page
 
@@ -34,40 +34,40 @@ class BackupsEditor(ft.Column):
         ]
         self.current_world: McWorld = McWorld(Path())
 
-    def update_backup_view(self):
+    def update_backup_view(self) -> None:
         self.backup_view.set_backups(self.backup_manager.backups)
         self.disable_control_buttons(True)
         self.update()
 
-    def disable_all_buttons(self, state: bool):
+    def disable_all_buttons(self, state: bool) -> None:
         self.create_button.disabled = state
         self.disable_control_buttons(state)
 
-    def disable_control_buttons(self, state: bool):
+    def disable_control_buttons(self, state: bool) -> None:
         self.restore_button.disabled = state
         self.delete_button.disabled = state
 
-    def change_world(self, new_world: McWorld):
+    def change_world(self, new_world: McWorld) -> None:
         self.current_world = new_world
         self.backup_manager.load(new_world.path)
         self.backup_manager.set_selected(None)
         self.update_backup_view()
         self.create_button.disabled = False
 
-    def _handle_selection_change(self, selected):
+    def _handle_selection_change(self, selected) -> None:
         self.disable_control_buttons(False)
         self.update()
         self.backup_manager.set_selected(selected)
 
-    def _delete_handler(self, e):
+    def _delete_handler(self, e) -> None:
         self.backup_manager.delete()
         self.update_backup_view()
 
-    def _show_create_popup(self, e):
+    def _show_create_popup(self, e) -> None:
         CreateBackupDialog(
             self.page, self.current_world.name, self._create_handler
         ).show()
 
-    def _create_handler(self, new_backup):
+    def _create_handler(self, new_backup) -> None:
         self.backup_manager.create(new_backup)
         self.update_backup_view()

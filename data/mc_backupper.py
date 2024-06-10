@@ -3,11 +3,12 @@ import flet as ft
 from data.mc_world import McSave
 from data.controls.saves_view import SavesView
 from data.controls.world_view import WorldView
-from data.utils import get_mc_folder
+from data.settings import Settings
+from data.dialogs.change_settings import ChangeSettings
 
 
 class McBackupper(ft.Row):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.expand = True
         self.page: ft.Page = page
@@ -15,14 +16,26 @@ class McBackupper(ft.Row):
         self._fill_page()
         self.page.add(self)
 
-    def _init_page(self):
+    def _init_page(self) -> None:
         self.page.title = "McBackupper"
         self.page.window_width = 800
         self.page.window_height = 600
+        self._init_bottom_app_bar()
         self.page.update()
 
-    def _fill_page(self):
-        mc_folder = get_mc_folder()
+    def _init_bottom_app_bar(self) -> None:
+        self.page.bottom_appbar = ft.BottomAppBar(
+            content=ft.Row(
+                controls=[
+                    ft.IconButton(
+                        icon=ft.icons.SETTINGS, on_click=ChangeSettings(self.page).show
+                    ),
+                ]
+            ),
+        )
+
+    def _fill_page(self) -> None:
+        mc_folder = Settings().get_mc_folder()
 
         saves = McSave("saves")
         saves.load_from_path(mc_folder.joinpath("saves"))
