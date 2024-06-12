@@ -1,6 +1,11 @@
 import sys
 import subprocess
+from datetime import datetime
 from pathlib import Path
+
+DATE_FORMAT = "%Y.%m.%d"
+TIME_FORMAT = "%H-%M-%S"
+DATETIME_FORMAT = f"{DATE_FORMAT} {TIME_FORMAT}"
 
 
 def open_with_explorer(path: Path) -> None:
@@ -12,6 +17,9 @@ def open_with_explorer(path: Path) -> None:
         subprocess.Popen(["xdg-open", path])
 
 
+def convert_timestamp(timestamp: int) -> str:
+    return datetime.fromtimestamp(timestamp).strftime(DATETIME_FORMAT)
+
 def get_default_mc_folder() -> Path:
     base_path = Path().home()
     if sys.platform == "win32":
@@ -20,7 +28,3 @@ def get_default_mc_folder() -> Path:
         return base_path.joinpath("Library", "Application Support", "minecraft")
     elif sys.platform == "linux":
         return base_path.joinpath(".minecraft")
-
-
-DEFAULT_MC_FOLDER = get_default_mc_folder()
-DEFAULT_BACKUPS_FOLDER = Path("backups")

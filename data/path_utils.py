@@ -1,9 +1,6 @@
-from datetime import datetime
 from pathlib import Path
 
 from data.settings import Settings
-
-TIME_FORMAT = "%Y.%m.%d %H-%M-%S"
 
 
 def get_rel_path(path: Path) -> Path:
@@ -14,8 +11,8 @@ def convert_world_path_to_backup(path: Path) -> Path:
     return Settings().get_backup_folder().joinpath(get_rel_path(path))
 
 
-def convert_timestamp(timestamp: int) -> str:
-    return datetime.fromtimestamp(timestamp).strftime(TIME_FORMAT)
+def get_top_dir(path: Path) -> Path:
+    return Path(*path.parts[:-1])
 
 
 def is_mc_folder(folder: Path) -> bool:

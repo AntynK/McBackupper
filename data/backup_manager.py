@@ -3,17 +3,14 @@ import shutil
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 
-
-from data.path_utils import (
-    convert_world_path_to_backup,
-    convert_timestamp,
-)
+from data.path_utils import convert_world_path_to_backup, get_top_dir
+from data.utils import convert_timestamp
 from data.settings import Settings
 
 BACKUPS_FOLDER = Path("backups")
 BACKUPS_FILE = Path("backups.json")
+BACKUP_FILE_FORMAT = "zip"
 
 
 @dataclass
@@ -22,10 +19,17 @@ class Backup:
     title: str = ""
     created: int = 0
     pull_ignore: bool = True
+    path: Path = Path()
 
     def __post_init__(self):
         if self.created == 0:
             self.created = int(datetime.now().timestamp())
+
+    def __eq__(self, other):
+        if isinstance(other, Backup):
+            return self.name == other.name
+        if isinstance(other, str):
+            return self.name == other
 
 
 class BackupManager:
@@ -34,10 +38,6 @@ class BackupManager:
         self.work_dir = Path()
         self.file_path = Path()
         self.world_path = Path()
-        self.selected_backup = None
-
-    def set_selected(self, selected: Optional[Backup]) -> None:
-        self.selected_backup = selected
 
     def load(self, world_path: Path) -> None:
         self.backups.clear()
@@ -59,13 +59,13 @@ class BackupManager:
             if not self.work_dir.joinpath(BACKUPS_FOLDER, name).is_file():
                 continue
             self.backups.append(self._load_backup(backup_data, name))
-        self._check_backups_folder(data)
-
-    def _check_backups_folder(self, data: dict) -> None:
-        for path in self.work_dir.joinpath(BACKUPS_FOLDER).iterdir():
-            if path.name not in data:
-                self.backups.append(Backup(name=path.name))
+        self._check_backups_folder()
         self.save()
+
+    def _check_backups_folder(self) -> None:
+        for path in self.work_dir.joinpath(BACKUPS_FOLDER).iterdir():
+            if path.name not in self.backups:
+                self.backups.append(Backup(name=path.name))
 
     def save(self) -> None:
         self.work_dir.mkdir(exist_ok=True, parents=True)
@@ -76,44 +76,45 @@ class BackupManager:
             json.dumps(result, ensure_ascii=False, indent=4), encoding="utf-8"
         )
 
-    def delete(self, backup: Optional[Backup] = None) -> None:
-        selected_backup = None
-        if backup is not None:
-            selected_backup = backup
-        elif self.selected_backup is not None:
-            selected_backup = self.selected_backup
-
-        if selected_backup is None:
-            return
-
-        self.backups.remove(selected_backup)
-        filepath = self.work_dir.joinpath(BACKUPS_FOLDER, selected_backup.name)
+    def delete(self, backup: Backup) -> None:
+        self.backups.remove(backup)
+        filepath = self.work_dir.joinpath(BACKUPS_FOLDER, backup.name)
         if filepath.is_file():
             filepath.unlink()
         self.save()
-        self.selected_backup = None
 
     def create(self, new_backup: Backup) -> None:
         if not self.world_path.is_dir():
             return
         filename = f"{new_backup.name} {convert_timestamp(new_backup.created)}"
 
-        new_backup.name = f"{filename}.zip"
+        new_backup.name = f"{filename}.{BACKUP_FILE_FORMAT}"
+        base_name = str(self.work_dir.joinpath(BACKUPS_FOLDER, filename))
 
-        top_dir = Path(*self.world_path.parts[:-1])
+        shutil.make_archive(
+            base_name=base_name,
+            format=BACKUP_FILE_FORMAT,
+            root_dir=get_top_dir(self.world_path),
+            base_dir=self.world_path.name,
+        )
 
-        shutil.make_archive(self.work_dir.joinpath(BACKUPS_FOLDER, filename), "zip", top_dir, self.world_path.name)  # type: ignore
         self.backups.append(new_backup)
         self.save()
         self._check_backup_pull()
 
-    def restore(self, e) -> None:
-        if self.selected_backup is None:
-            return
-        backup_file = self.work_dir.joinpath(BACKUPS_FOLDER, self.selected_backup.name)
+    def restore(self, backup: Backup) -> None:
+        backup_file = self.work_dir.joinpath(BACKUPS_FOLDER, backup.name)
         shutil.rmtree(self.world_path, True)
-        top_dir = Path(*self.world_path.parts[:-1])
-        shutil.unpack_archive(backup_file, top_dir, "zip")
+        shutil.unpack_archive(
+            filename=backup_file,
+            extract_dir=get_top_dir(self.world_path),
+            format=BACKUP_FILE_FORMAT,
+        )
+
+    def update(self, backup: Backup):
+        index = self.backups.index(backup)
+        self.backups[index] = backup
+        self.save()
 
     def _check_backup_pull(self) -> None:
         pull = [backup for backup in self.backups if not backup.pull_ignore]
@@ -130,6 +131,7 @@ class BackupManager:
         result.title = backup_data.get("title", "")
         result.created = backup_data.get("created", 0)
         result.pull_ignore = backup_data.get("pull_ignore", True)
+        result.path = self.work_dir.joinpath(BACKUPS_FOLDER)
         return result
 
     def _save_backup(self, backup: Backup) -> dict:

@@ -24,36 +24,23 @@ class ChangeSettings(Dialog):
         ]
 
     def save(self, event=None) -> None:
-        backup_folder = Path(self.backups_folder_field.path)  # type: ignore
-        if not backup_folder.is_dir():
-            self.backups_folder_field.set_error("Wrong path")
+        if not self._validate_backup_folder_path():
             return
-        Settings().update_backup_folder(backup_folder)
-        self.backups_folder_field.remove_error()
 
-        mc_folder = Path(self.mc_folder_field.path)  # type: ignore
-        if not is_mc_folder(mc_folder):
-            self.mc_folder_field.set_error("Wrong path")
+        if not self._validate_mc_folder_path():
             return
-        Settings().update_mc_folder(mc_folder)
-        self.mc_folder_field.remove_error()
 
-        try:
-            pull_size = int(self.pull_size_entry.value)  # type: ignore
-            if pull_size <= 0:
-                raise ValueError()
-        except ValueError:
-            self.pull_size_entry.error_text = "Wrong size"
-            self.pull_size_entry.update()
+        if not self._validate_pull_size():
             return
-        self.pull_size_entry.error_text = ""
-        self.pull_size_entry.update()
 
-        Settings().update_pull_size(pull_size)
         self.close()
 
     def show(self, event=None) -> None:
         super().show(event)
+        self._update_fields_value()
+        self.update()
+
+    def _update_fields_value(self):
         self.backups_folder_field.path = str(Settings().get_backup_folder())
         self.backups_folder_field.remove_error()
 
@@ -62,4 +49,35 @@ class ChangeSettings(Dialog):
 
         self.pull_size_entry.value = str(Settings().get_pull_size())
         self.pull_size_entry.error_text = ""
-        self.update()
+
+    def _validate_backup_folder_path(self) -> bool:
+        backup_folder = Path(self.backups_folder_field.path)  # type: ignore
+        if not backup_folder.is_dir():
+            self.backups_folder_field.set_error("Wrong path")
+            return False
+        Settings().update_backup_folder(backup_folder)
+        self.backups_folder_field.remove_error()
+        return True
+
+    def _validate_mc_folder_path(self) -> bool:
+        mc_folder = Path(self.mc_folder_field.path)  # type: ignore
+        if not is_mc_folder(mc_folder):
+            self.mc_folder_field.set_error("Wrong path")
+            return False
+        Settings().update_mc_folder(mc_folder)
+        self.mc_folder_field.remove_error()
+        return True
+
+    def _validate_pull_size(self) -> bool:
+        try:
+            pull_size = int(self.pull_size_entry.value)  # type: ignore
+            if pull_size <= 0:
+                raise ValueError()
+        except ValueError:
+            self.pull_size_entry.error_text = "Wrong size"
+            self.pull_size_entry.update()
+            return False
+        self.pull_size_entry.error_text = ""
+        self.pull_size_entry.update()
+        Settings().update_pull_size(pull_size)
+        return True

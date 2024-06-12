@@ -2,12 +2,12 @@ from typing import Callable
 
 import flet as ft
 
-from data.backups import Backup
+from data.backup_manager import Backup
 from data.controls.backup_data_row import BackupDataRow
 
 
 class BackupsView(ft.DataTable):
-    def __init__(self, on_select_changed: Callable) -> None:
+    def __init__(self, on_select_changed: Callable, on_long_press: Callable) -> None:
         super().__init__()
 
         self.border = ft.Border(
@@ -25,6 +25,7 @@ class BackupsView(ft.DataTable):
         self.rows = []
         self.backups: list[Backup] = []
         self.on_select_changed = on_select_changed
+        self.on_long_press = on_long_press
 
     def set_backups(self, backups: list[Backup]) -> None:
         self.backups = backups
@@ -33,5 +34,7 @@ class BackupsView(ft.DataTable):
     def update_table(self) -> None:
         self.rows.clear()
         for backup in self.backups:
-            self.rows.append(BackupDataRow(backup, self.on_select_changed))
+            self.rows.append(
+                BackupDataRow(backup, self.on_select_changed, self.on_long_press)
+            )
         self.update()

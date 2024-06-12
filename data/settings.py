@@ -2,10 +2,13 @@ import json
 from pathlib import Path
 from typing import Union, Any
 
-from data.utils import DEFAULT_MC_FOLDER, DEFAULT_BACKUPS_FOLDER
+from data.utils import get_default_mc_folder
 
 SETTINGS_FILE = Path("settings.json")
+
 DEFAULT_PULL_SIZE = 4
+DEFAULT_MC_FOLDER = get_default_mc_folder()
+DEFAULT_BACKUPS_FOLDER = Path("backups")
 
 
 class Settings:
