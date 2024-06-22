@@ -12,7 +12,7 @@ class ChangeBackup(Dialog):
         self, page: ft.Page, backup: Backup, after_completion: Callable
     ) -> None:
         super().__init__(page=page, title="Change backup")
-        self.backup_entry = BackupEntry(backup)
+        self.backup_entry = BackupEntry(backup, True)
 
         self.content = self.backup_entry
 

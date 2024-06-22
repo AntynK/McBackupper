@@ -3,12 +3,19 @@ from pathlib import Path
 from data.settings import Settings
 
 
-def get_rel_path(path: Path) -> Path:
-    return path.relative_to(Settings().get_mc_folder())
+def get_rel_world_path(world_path: Path) -> Path:
+    """Return relative path to Minecraft folder. It is used to remove `.minecraft` from world path.
+
+    Example `.minecraft/saves/NewWorld` converts to `saves/NewWorld`
+    """
+
+    return world_path.relative_to(Settings().get_mc_folder())
 
 
-def convert_world_path_to_backup(path: Path) -> Path:
-    return Settings().get_backup_folder().joinpath(get_rel_path(path))
+def convert_world_path_to_backup(world_path: Path) -> Path:
+    """Convert world path(example `.minecraft/saves/NewWorld`) to path for backup folder(example `backups/saves/NewWrold`)."""
+
+    return Settings().get_backup_folder().joinpath(get_rel_world_path(world_path))
 
 
 def get_top_dir(path: Path) -> Path:

@@ -6,7 +6,7 @@ from data.utils import get_default_mc_folder
 
 SETTINGS_FILE = Path("settings.json")
 
-DEFAULT_PULL_SIZE = 4
+DEFAULT_POOL_SIZE = 4
 DEFAULT_MC_FOLDER = get_default_mc_folder()
 DEFAULT_BACKUPS_FOLDER = Path("backups")
 
@@ -34,7 +34,7 @@ class Settings:
         except OSError:
             self.update_backup_folder(DEFAULT_BACKUPS_FOLDER)
             self.update_mc_folder(DEFAULT_MC_FOLDER)
-            self.update_pull_size(DEFAULT_PULL_SIZE)
+            self.update_pool_size(DEFAULT_POOL_SIZE)
 
     def save(self) -> None:
         with open(
@@ -62,11 +62,14 @@ class Settings:
         self._data["mc_folder"] = str(new_folder)
         self.save()
 
-    def get_pull_size(self) -> int:
-        if "pull_size" not in self._data:
-            self.update_pull_size(DEFAULT_PULL_SIZE)
-        return self._data["pull_size"]
+    def get_pool_size(self) -> int:
+        if "pull_size" in self._data: # Compatibility with previous versions
+            self._data["pool_size"] = self._data.pop("pull_size")
 
-    def update_pull_size(self, new_size: int):
-        self._data["pull_size"] = new_size
+        if "pool_size" not in self._data:
+            self.update_pool_size(DEFAULT_POOL_SIZE)
+        return self._data["pool_size"]
+
+    def update_pool_size(self, new_size: int):
+        self._data["pool_size"] = new_size
         self.save()

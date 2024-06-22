@@ -9,6 +9,7 @@ from data.controls.clickable_text import ClickableText
 class WorldView(ft.Column):
     def __init__(self, page: ft.Page) -> None:
         super().__init__()
+        self.expand = True
         self.page = page
         self.world_name_text = ft.Text(weight=ft.FontWeight.BOLD, size=20)
         self.world_path_text = ClickableText(

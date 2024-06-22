@@ -1,11 +1,13 @@
 import json
 import shutil
+import re
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 
 from data.path_utils import convert_world_path_to_backup, get_top_dir
-from data.utils import convert_timestamp
+from data.utils import convert_timestamp, FILE_DATETIME_FORMAT
 from data.settings import Settings
 
 BACKUPS_FOLDER = Path("backups")
@@ -18,7 +20,7 @@ class Backup:
     name: str = ""
     title: str = ""
     created: int = 0
-    pull_ignore: bool = True
+    pool_ingore: bool = True
     path: Path = Path()
 
     def __post_init__(self):
@@ -32,6 +34,19 @@ class Backup:
             return self.name == other
 
 
+class SortKeys(Enum):
+    NAME = "name"
+    TITLE = "title"
+    CREATED = "created"
+    POOL_IGNORE = "pool_ingore"
+
+
+def sort_backups(
+    backups: list[Backup], key: SortKeys, reverse: bool = False
+) -> list[Backup]:
+    return sorted(backups, key=lambda e: getattr(e, key.value), reverse=reverse)
+
+
 class BackupManager:
     def __init__(self) -> None:
         self.backups: list[Backup] = []
@@ -39,18 +54,21 @@ class BackupManager:
         self.file_path = Path()
         self.world_path = Path()
 
+    def get_sorted_backups(self) -> list[Backup]:
+        return sort_backups(self.backups, SortKeys.CREATED)
+
     def load(self, world_path: Path) -> None:
         self.backups.clear()
         self.world_path = world_path
         self.work_dir = convert_world_path_to_backup(world_path)
         self.file_path = self.work_dir.joinpath(BACKUPS_FILE)
 
-        if not self.file_path.is_file():
+        if not self.work_dir.joinpath(BACKUPS_FOLDER).is_dir():
             return
 
         try:
             data = json.loads(self.file_path.read_text("utf-8"))
-        except json.decoder.JSONDecodeError:
+        except (json.decoder.JSONDecodeError, OSError):
             data = {}
 
         if not isinstance(data, dict):
@@ -64,14 +82,27 @@ class BackupManager:
 
     def _check_backups_folder(self) -> None:
         for path in self.work_dir.joinpath(BACKUPS_FOLDER).iterdir():
-            if path.name not in self.backups:
-                self.backups.append(Backup(name=path.name))
+            file_name = path.name
+            if file_name not in self.backups:
+                self.backups.append(
+                    Backup(
+                        name=file_name,
+                        created=self._get_timestamp_from_string(file_name),
+                        pool_ingore=False,
+                    )
+                )
+
+    def _get_timestamp_from_string(self, string: str) -> int:
+        matched = re.match(r"\d{4}.\d{2}.\d{2}.\d{2}.\d{2}.\d{2}", string)
+        if matched is None:
+            return 0
+
+        return int(datetime.strptime(matched.group(), FILE_DATETIME_FORMAT).timestamp())
 
     def save(self) -> None:
         self.work_dir.mkdir(exist_ok=True, parents=True)
-        result = {}
-        for backup in self.backups:
-            result.update(**self._save_backup(backup))
+        result = dict(self._save_backup(backup) for backup in self.backups)
+
         self.file_path.write_text(
             json.dumps(result, ensure_ascii=False, indent=4), encoding="utf-8"
         )
@@ -86,10 +117,10 @@ class BackupManager:
     def create(self, new_backup: Backup) -> None:
         if not self.world_path.is_dir():
             return
-        filename = f"{new_backup.name} {convert_timestamp(new_backup.created)}"
-
+        filename = f"{convert_timestamp(new_backup.created, FILE_DATETIME_FORMAT)}_{new_backup.name}"
+        new_backup.path = self.work_dir.joinpath(BACKUPS_FOLDER)
         new_backup.name = f"{filename}.{BACKUP_FILE_FORMAT}"
-        base_name = str(self.work_dir.joinpath(BACKUPS_FOLDER, filename))
+        base_name = str(new_backup.path.joinpath(filename))
 
         shutil.make_archive(
             base_name=base_name,
@@ -100,7 +131,7 @@ class BackupManager:
 
         self.backups.append(new_backup)
         self.save()
-        self._check_backup_pull()
+        self._check_backup_pool()
 
     def restore(self, backup: Backup) -> None:
         backup_file = self.work_dir.joinpath(BACKUPS_FOLDER, backup.name)
@@ -111,18 +142,14 @@ class BackupManager:
             format=BACKUP_FILE_FORMAT,
         )
 
-    def update(self, backup: Backup):
-        index = self.backups.index(backup)
-        self.backups[index] = backup
-        self.save()
-
-    def _check_backup_pull(self) -> None:
-        pull = [backup for backup in self.backups if not backup.pull_ignore]
-        max_len = Settings().get_pull_size()
-        if len(pull) <= max_len:
+    def _check_backup_pool(self) -> None:
+        pool = [backup for backup in self.backups if not backup.pool_ingore]
+        max_len = Settings().get_pool_size()
+        if len(pool) <= max_len:
             return
-        pull.sort(key=lambda backup: backup.created, reverse=True)
-        for backup in pull[max_len:]:
+
+        sorted_pool = sort_backups(pool, SortKeys.CREATED, True)
+        for backup in sorted_pool[max_len:]:
             self.delete(backup)
 
     def _load_backup(self, backup_data: dict, name: str) -> Backup:
@@ -130,13 +157,17 @@ class BackupManager:
         result.name = name
         result.title = backup_data.get("title", "")
         result.created = backup_data.get("created", 0)
-        result.pull_ignore = backup_data.get("pull_ignore", True)
+        if "pull_ignore" in backup_data:  # Compatibility with previous versions
+            backup_data["pool_ignore"] = backup_data["pull_ignore"]
+
+        result.pool_ingore = backup_data.get("pool_ignore", True)
+
         result.path = self.work_dir.joinpath(BACKUPS_FOLDER)
         return result
 
-    def _save_backup(self, backup: Backup) -> dict:
+    def _save_backup(self, backup: Backup) -> tuple[str, dict]:
         result = {}
         result["title"] = backup.title
         result["created"] = backup.created
-        result["pull_ignore"] = backup.pull_ignore
-        return {backup.name: result}
+        result["pool_ignore"] = backup.pool_ingore
+        return backup.name, result

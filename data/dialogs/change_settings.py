@@ -13,10 +13,10 @@ class ChangeSettings(Dialog):
         super().__init__(page=page, title="Settings")
         self.backups_folder_field = PathField(label="Backups folder", page=page)
         self.mc_folder_field = PathField(label="Minecraft folder", page=page)
-        self.pull_size_entry = ft.TextField(label="Pull size")
+        self.pool_size_entry = ft.TextField(label="Pool size")
 
         self.content = ft.Column(
-            [self.backups_folder_field, self.mc_folder_field, self.pull_size_entry]
+            [self.backups_folder_field, self.mc_folder_field, self.pool_size_entry]
         )
         self.actions = [
             ft.TextButton("Save", on_click=self.save),
@@ -30,7 +30,7 @@ class ChangeSettings(Dialog):
         if not self._validate_mc_folder_path():
             return
 
-        if not self._validate_pull_size():
+        if not self._validate_pool_size():
             return
 
         self.close()
@@ -47,8 +47,8 @@ class ChangeSettings(Dialog):
         self.mc_folder_field.path = str(Settings().get_mc_folder())
         self.backups_folder_field.remove_error()
 
-        self.pull_size_entry.value = str(Settings().get_pull_size())
-        self.pull_size_entry.error_text = ""
+        self.pool_size_entry.value = str(Settings().get_pool_size())
+        self.pool_size_entry.error_text = ""
 
     def _validate_backup_folder_path(self) -> bool:
         backup_folder = Path(self.backups_folder_field.path)  # type: ignore
@@ -68,16 +68,16 @@ class ChangeSettings(Dialog):
         self.mc_folder_field.remove_error()
         return True
 
-    def _validate_pull_size(self) -> bool:
+    def _validate_pool_size(self) -> bool:
         try:
-            pull_size = int(self.pull_size_entry.value)  # type: ignore
-            if pull_size <= 0:
+            pool_size = int(self.pool_size_entry.value)  # type: ignore
+            if pool_size <= 0:
                 raise ValueError()
         except ValueError:
-            self.pull_size_entry.error_text = "Wrong size"
-            self.pull_size_entry.update()
+            self.pool_size_entry.error_text = "Wrong size"
+            self.pool_size_entry.update()
             return False
-        self.pull_size_entry.error_text = ""
-        self.pull_size_entry.update()
-        Settings().update_pull_size(pull_size)
+        self.pool_size_entry.error_text = ""
+        self.pool_size_entry.update()
+        Settings().update_pool_size(pool_size)
         return True
