@@ -1,0 +1,73 @@
+# Translation template for controls(widgets) 
+# Copyright (C) 2024 Andrii Karandashov(AntynK)
+# This file is distributed under the same license as the McBackupper package.
+# Andrii Karandashov(AntynK), 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.1.0\n"
+"POT-Creation-Date: 2024-06-25 22:22+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data\mc_backupper.py:23
+msgid "McBackupper"
+msgstr ""
+
+#: data\mc_backupper.py:43
+msgid "saves"
+msgstr ""
+
+#: data\mc_backupper.py:46
+msgid "versions"
+msgstr ""
+
+#: data\controls\backups_editor.py:29
+msgid "Restore"
+msgstr ""
+
+#: data\controls\backups_editor.py:32
+msgid "Create"
+msgstr ""
+
+#: data\controls\backups_editor.py:37
+msgid "Edit"
+msgstr ""
+
+#: data\controls\backups_editor.py:42
+msgid "Delete"
+msgstr ""
+
+#: data\controls\backups_view.py:26 data\controls\backup_entry.py:19
+msgid "File name"
+msgstr ""
+
+#: data\controls\backups_view.py:30 data\controls\backup_entry.py:25
+msgid "Title"
+msgstr ""
+
+#: data\controls\backups_view.py:34
+msgid "Created"
+msgstr ""
+
+#: data\controls\backups_view.py:38 data\controls\backup_entry.py:29
+msgid "Pool ignore"
+msgstr ""
+
+#: data\controls\date_picker.py:20
+msgid "Date:"
+msgstr ""
+
+#: data\controls\path_field.py:43
+msgid "Select folder"
+msgstr ""
+
+#: data\controls\time_picker.py:19
+msgid "Time:"
+msgstr ""

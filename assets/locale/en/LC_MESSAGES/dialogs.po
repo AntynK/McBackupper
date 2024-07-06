@@ -1,0 +1,70 @@
+# Translation template for dialogs 
+# Copyright (C) 2024 Andrii Karandashov(AntynK)
+# This file is distributed under the same license as the McBackupper package.
+# Andrii Karandashov(AntynK), 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.1.0\n"
+"POT-Creation-Date: 2024-06-25 21:44+0300\n"
+"PO-Revision-Date: 2024-06-25 22:25+0300\n"
+"Last-Translator: Andrii Karandashov(AntynK)\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data\dialogs\change_backup.py:17
+msgid "Change backup"
+msgstr ""
+
+#: data\dialogs\change_backup.py:23 data\dialogs\change_settings.py:33
+msgid "Save"
+msgstr ""
+
+#: data\dialogs\change_backup.py:24 data\dialogs\change_settings.py:34
+#: data\dialogs\create_backup.py:24
+msgid "Cancel"
+msgstr ""
+
+#: data\dialogs\change_settings.py:17
+msgid "Settings"
+msgstr ""
+
+#: data\dialogs\change_settings.py:18
+msgid "Backups folder"
+msgstr ""
+
+#: data\dialogs\change_settings.py:19
+msgid "Minecraft folder"
+msgstr ""
+
+#: data\dialogs\change_settings.py:20
+msgid "Pool size"
+msgstr ""
+
+#: data\dialogs\change_settings.py:21
+msgid "Language"
+msgstr ""
+
+#: data\dialogs\change_settings.py:29
+msgid "NOTE: language will change after a restart"
+msgstr ""
+
+#: data\dialogs\change_settings.py:71 data\dialogs\change_settings.py:81
+msgid "Wrong path"
+msgstr ""
+
+#: data\dialogs\change_settings.py:93
+msgid "Wrong size"
+msgstr ""
+
+#: data\dialogs\create_backup.py:17
+msgid "Create backup"
+msgstr ""
+
+#: data\dialogs\create_backup.py:23
+msgid "Create"
+msgstr ""

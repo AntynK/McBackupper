@@ -3,8 +3,12 @@ from typing import Callable, Optional
 
 import flet as ft
 
-from data.backup_manager import Backup, sort_backups, SortKeys
+from data.backup_manager.backup import Backup
+from data.backup_manager.sorting import sort_backups, SortKeys
 from data.controls.backup_data_row import BackupDataRow
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 
 class BackupsView(ft.DataTable):
@@ -20,19 +24,19 @@ class BackupsView(ft.DataTable):
         )
         self.columns = [
             ft.DataColumn(
-                ft.Text("File name"),
+                ft.Text(_("File name")),
                 on_sort=partial(self.sort_table, sort_key=SortKeys.NAME),
             ),
             ft.DataColumn(
-                ft.Text("Title"),
+                ft.Text(_("Title")),
                 on_sort=partial(self.sort_table, sort_key=SortKeys.TITLE),
             ),
             ft.DataColumn(
-                ft.Text("Created(Y.M.D H-M-S)"),
+                ft.Text(_("Created")),
                 on_sort=partial(self.sort_table, sort_key=SortKeys.CREATED),
             ),
             ft.DataColumn(
-                ft.Text("Pool ignore"),
+                ft.Text(_("Pool ignore")),
                 on_sort=partial(self.sort_table, sort_key=SortKeys.POOL_IGNORE),
             ),
         ]

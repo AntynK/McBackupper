@@ -1,6 +1,9 @@
 from datetime import datetime, date
 
 from data.controls.base_time_picker import BaseTimePicker
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 MAX_YEAR = 9999
 MAX_MONTH = 12
@@ -13,7 +16,9 @@ class DatePicker(BaseTimePicker):
     MAX_THIRD_VALUE = MAX_DAY
 
     def __init__(self, inital_time: datetime):
-        super().__init__(inital_time, "Date:", self._time_factory, first_field_width=70)
+        super().__init__(
+            inital_time, _("Date:"), self._time_factory, first_field_width=70
+        )
 
         self.current_time = inital_time.date()
 
@@ -34,4 +39,3 @@ class DatePicker(BaseTimePicker):
     def get(self) -> date:
         self.check_fields_value()
         return self.current_time
-    

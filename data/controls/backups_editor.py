@@ -4,10 +4,14 @@ from pathlib import Path
 import flet as ft
 
 from data.mc_world import McWorld
-from data.backup_manager import BackupManager, Backup
+from data.backup_manager.backup_manager import BackupManager
+from data.backup_manager.backup import Backup
 from data.controls.backups_view import BackupsView
 from data.dialogs.create_backup import CreateBackupDialog
 from data.dialogs.change_backup import ChangeBackup
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 
 class BackupsEditor(ft.Column):
@@ -23,20 +27,20 @@ class BackupsEditor(ft.Column):
         self.backup_manager = BackupManager()
 
         self.restore_button = ft.TextButton(
-            "Restore", icon=ft.icons.RESTORE, on_click=self._restore_handler
+            _("Restore"), icon=ft.icons.RESTORE, on_click=self._restore_handler
         )
         self.create_button = ft.TextButton(
-            "Create",
+            _("Create"),
             icon=ft.icons.ADD,
             on_click=self._show_create_popup,
         )
         self.edit_button = ft.TextButton(
-            "Edit",
+            _("Edit"),
             icon=ft.icons.EDIT,
             on_click=lambda e: self._show_change_backup_menu(),
         )
         self.delete_button = ft.TextButton(
-            "Delete", icon=ft.icons.DELETE, on_click=self._delete_handler
+            _("Delete"), icon=ft.icons.DELETE, on_click=self._delete_handler
         )
         self.disable_all_buttons(True)
         self.controls = [
@@ -54,7 +58,7 @@ class BackupsEditor(ft.Column):
         self.selected_backup: Union[None, Backup] = None
 
     def update_backup_view(self) -> None:
-        self.backup_view.set_backups(self.backup_manager.get_sorted_backups())
+        self.backup_view.set_backups(self.backup_manager.get_backups())
         self.disable_control_buttons(True)
         self.update()
 

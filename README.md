@@ -53,5 +53,10 @@ The program can automatically determine the backup creation date (if it is forma
 > [!NOTE]  
 > Backups that have been transferred in this way will be included in the pool.
 
+## Localizers
+GNU gettext is used for localization. To add a new language, you need to create a subfolder with the [language code](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) (example `assets/locale/pl/LC_MESSAGES`).
+Then copy template files(with `.pot` extension).
+After filling in templete you can create [pull request](https://github.com/AntynK/McBackupper/pulls) (make sure to add `.mo` extension to `.gitignore`).
+
 ## Contributors
 If you have ideas for improvement or want to contribute to the development of the project, please submit your contribution. See [CONTRIBUTING.md](CONTRIBUTING.md).

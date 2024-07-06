@@ -2,9 +2,12 @@ from datetime import datetime
 
 import flet as ft
 
-from data.backup_manager import Backup
+from data.backup_manager.backup import Backup
 from data.controls.time_picker import TimePicker
 from data.controls.date_picker import DatePicker
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 
 class BackupEntry(ft.Column):
@@ -13,15 +16,17 @@ class BackupEntry(ft.Column):
         self.result = backup
 
         self.name_field = ft.TextField(
-            label="File name",
+            label=_("File name"),
             value=backup.name,
             expand=True,
             disabled=disable_name_field,
         )
-        self.title_field = ft.TextField(label="Title", value=backup.title, expand=True)
+        self.title_field = ft.TextField(
+            label=_("Title"), value=backup.title, expand=True
+        )
 
         self.pool_ignore_checkbox = ft.Checkbox(
-            label="Pool ignore", value=backup.pool_ingore
+            label=_("Pool ignore"), value=backup.pool_ingore
         )
         creation_time = datetime.fromtimestamp(self.result.created)
         self.time_picker = TimePicker(creation_time)

@@ -1,4 +1,11 @@
+from pathlib import Path
+
 import flet as ft
+
+from data.path_utils import get_top_dir
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 
 class PathField(ft.Row):
@@ -36,4 +43,7 @@ class PathField(ft.Row):
             self.update()
 
     def _show_file_picker(self, event=None) -> None:
-        self.file_picker.get_directory_path("Select folder", self.path)
+        path = Path(self.path)
+        if not path.is_dir():
+            path = get_top_dir(path)
+        self.file_picker.get_directory_path(_("Select folder"), str(path))

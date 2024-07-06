@@ -1,7 +1,7 @@
 from typing import Callable
 import flet as ft
 
-from data.backup_manager import Backup
+from data.backup_manager.backup import Backup
 from data.utils import convert_timestamp, open_with_explorer, UI_DATETIME_FORMAT
 
 

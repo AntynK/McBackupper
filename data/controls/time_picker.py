@@ -1,6 +1,9 @@
 from datetime import datetime, time
 
 from data.controls.base_time_picker import BaseTimePicker
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 MAX_HOUR = 23
 MAX_MINUTE = 59
@@ -13,7 +16,7 @@ class TimePicker(BaseTimePicker):
     MAX_THIRD_VALUE = MAX_SECOND
 
     def __init__(self, inital_time: datetime):
-        super().__init__(inital_time, "Time:", time)
+        super().__init__(inital_time, _("Time:"), time)
 
         self.current_time = inital_time.time()
 

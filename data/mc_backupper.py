@@ -5,6 +5,9 @@ from data.controls.saves_view import SavesView
 from data.controls.world_view import WorldView
 from data.settings import Settings
 from data.dialogs.change_settings import ChangeSettings
+from data.localization import Localization, Domains
+
+_ = Localization().get_handler(Domains.CONTROLS)
 
 
 class McBackupper(ft.Row):
@@ -17,7 +20,7 @@ class McBackupper(ft.Row):
         self.page.add(self)
 
     def _init_page(self) -> None:
-        self.page.title = "McBackupper"
+        self.page.title = _("McBackupper")
         self.page.window_width = 800
         self.page.window_height = 600
         self._init_bottom_app_bar()
@@ -37,10 +40,10 @@ class McBackupper(ft.Row):
     def _fill_page(self) -> None:
         mc_folder = Settings().get_mc_folder()
 
-        saves = McSave("saves")
+        saves = McSave(_("saves"))
         saves.load_from_path(mc_folder.joinpath("saves"))
 
-        versions = McSave("versions")
+        versions = McSave(_("versions"))
         versions.load_from_path(mc_folder.joinpath("versions"))
 
         world_view = WorldView(self.page)
