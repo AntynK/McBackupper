@@ -1,6 +1,40 @@
 # Mc Backupper
 Tool for making backups of Minecraft worlds from `saves` and `versions` folders.
 
+## Installation
+### Download .exe file
+Download the archive [`McBackupper.windows.64.bit.zip`](https://github.com/AntynK/McBackupper/releases/latest), unpack it, and run the `.exe` file.
+
+> [!IMPORTANT]  
+> Antiviruses could mark this file as potentially malicious. You can try the second method.
+
+### Download source code
+Download the [`Source code(zip)`](https://github.com/AntynK/McBackupper/releases/latest) and unpack it.
+
+The program was written in [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) (versions up to 3.9 should also work) and the [flet](https://pypi.org/project/flet/0.23.1/) framework. It is better to download it from [requirements.txt](requirements.txt) using the command:
+
+For Windows:
+``` Bash
+pip install -r requirements.txt
+```
+
+For Linux and macOS: 
+``` Bash
+pip3 install -r requirements.txt
+```
+
+Then run the [main.pyw](main.pyw) file using the command (or by double-clicking):
+
+For Windows:
+``` Bash
+python main.pyw
+```
+
+For Linux and macOS: 
+``` Bash
+python3 main.pyw
+```
+
 ## Basic
 ### Creation
 All data that you have entered during creation are stored separately from the backup file.  

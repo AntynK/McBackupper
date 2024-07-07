@@ -1,6 +1,39 @@
 # Mc Backupper
 Ця програма дає змогу робити резервні копії світів Minecraft з папок `saves` та `versions`.
 
+## Встановлення
+### Завантажити exe файл 
+Для цього завантажте архів [`McBackupper.windows.64.bit.zip`](https://github.com/AntynK/McBackupper/releases/latest), розпакуйте його та запустіть `.exe` файл.
+> [!IMPORTANT]  
+> Антивіруси можуть позначати .exe файл як потенційно шкідливий. Якщо ви переживаєте, спробуйте другий спосіб.
+
+### Завантажити вихідний код 
+Для цього завантажте [`Source code(zip)`](https://github.com/AntynK/McBackupper/releases/latest) та розпакуйте його. 
+
+Програма написана за допомогою [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) (версії до 3.9 також мають працювати) та фреймворку [flet](https://pypi.org/project/flet/0.23.1/), яку краще завантажити з файлу [requirements.txt](requirements.txt) за допомогою команди:
+
+Для Windows:
+``` Bash
+pip install -r requirements.txt
+```
+
+Для Linux та macOS: 
+``` Bash
+pip3 install -r requirements.txt
+```
+
+Після цього потрібно запустити файл [main.pyw](main.pyw) за допомогою команди (або двічі натиснувши на нього):
+
+Для Windows:
+``` Bash
+python main.pyw
+```
+
+Для Linux та macOS: 
+``` Bash
+python3 main.pyw
+```
+
 ## Основне
 ### Створення
 Всі налаштування, які ви вводите при створенні резервної копії, зберігаються окремо і не впливають на саму резервну копію.  
