@@ -2,7 +2,7 @@ from typing import Union
 from pathlib import Path
 
 
-INPORTANT_WORLD_ITEMS = ("level.dat", "region", "data", "icon.png")
+INPORTANT_WORLD_ITEMS = ("level.dat", "region")
 
 
 class McWorld:
