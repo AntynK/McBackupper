@@ -46,7 +46,9 @@ class Settings:
             json.dump(self._data, file, ensure_ascii=False, indent=4)
 
     def get_backup_folder(self) -> Path:
-        path = self._get_value("backup_folder", str(DEFAULT_BACKUPS_FOLDER.absolute()), str)
+        path = self._get_value(
+            "backup_folder", str(DEFAULT_BACKUPS_FOLDER.absolute()), str
+        )
         return Path(path).absolute()
 
     def update_backup_folder(self, new_folder: Union[str, Path]) -> None:

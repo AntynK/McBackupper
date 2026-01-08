@@ -1,16 +1,27 @@
 # Mc Backupper
+
+> [!NOTE]
+> An [English](README.md) version of this document is available.
+
 Ця програма дає змогу робити резервні копії світів Minecraft з папок `saves` та `versions`.
 
 ## Встановлення
-### Завантажити exe файл 
-Для цього завантажте архів [`McBackupper.windows.64.bit.zip`](https://github.com/AntynK/McBackupper/releases/latest), розпакуйте його та запустіть `.exe` файл.
+### Сумісність
+Програма була розроблена та перевірена лише на Windows 10, інші операційні системи технічно підтримуються (оскільки flet є кросплатформеним), але не були перевірені.
+
+> [!IMPORTANT]  
+> Як вказано в [документації](https://docs.flet.dev/services/filepicker/), користувачі Linux мають встановити Zenity.
+
+### Завантажити .exe файл 
+Для цього завантажте архів [`McBackupper.windows.64.bit.zip`](https://github.com/AntynK/McBackupper/releases/latest), розпакуйте його та запустіть файл `mcbackupper.exe`.
+
 > [!IMPORTANT]  
 > Антивіруси можуть позначати .exe файл як потенційно шкідливий. Якщо ви переживаєте, спробуйте другий спосіб.
 
 ### Завантажити вихідний код 
 Для цього завантажте [`Source code(zip)`](https://github.com/AntynK/McBackupper/releases/latest) та розпакуйте його. 
 
-Програма написана за допомогою [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) (версії до 3.9 також мають працювати) та фреймворку [flet](https://pypi.org/project/flet/0.23.1/), яку краще завантажити з файлу [requirements.txt](requirements.txt) за допомогою команди:
+Програма написана за допомогою [Python 3.12.4](https://www.python.org/downloads/release/python-3124/) (версії з 3.10 також мають працювати) та фреймворку [flet](https://pypi.org/project/flet/0.80.0/), яку краще завантажити з файлу [requirements.txt](requirements.txt) за допомогою команди:
 
 Для Windows:
 ``` Bash
@@ -22,16 +33,16 @@ pip install -r requirements.txt
 pip3 install -r requirements.txt
 ```
 
-Після цього потрібно запустити файл [main.pyw](main.pyw) за допомогою команди (або двічі натиснувши на нього):
+Після цього потрібно запустити файл [main.py](main.py) за допомогою команди (або двічі натиснувши на нього):
 
 Для Windows:
 ``` Bash
-python main.pyw
+python main.py
 ```
 
 Для Linux та macOS: 
 ``` Bash
-python3 main.pyw
+python3 main.py
 ```
 
 ## Основне
@@ -84,8 +95,32 @@ python3 main.pyw
 > Копії, які були перенесені таким чином, входитимуть в пул.
 
 ## Локалізатори
-Програма використовує GNU gettext для локалізації. Якщо ви хочете додати свою мову, вам потрібно створити підпапку з [кодом вашої мови](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html) (наприклад `assets/locale/pl/LC_MESSAGES`). Після цього скопіюйте шаблонні файли(з розширенням `.pot`).
-Після заповнення шаблону можете створити [pull request](https://github.com/AntynK/McBackupper/pulls) (обов'язково додайте розширення `.mo` до `.gitignore`).
+Програма використовує GNU gettext для локалізації. Якщо ви хочете додати свою мову, вам потрібно створити підпапку з [кодом вашої мови](https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html), у цій папці має бути ще одна папка `LC_MESSAGES` (зразок `assets/locale/pl/LC_MESSAGES`). Після цього скопіюйте шаблонні файли (з розширенням `.pot`):
+``` bash
+msginit -i assets/locale/controls.pot -o assets/locale/<Код мови>/LC_MESSAGES/controls.po
+
+msginit -i assets/locale/dialogs.pot -o assets/locale/<Код мови>/LC_MESSAGES/dialogs.po
+```
+
+Або якщо ви вже створили `.po` файли то оновіть їх:
+``` bash
+msgmerge --update assets/locale/<Код мови>/LC_MESSAGES/controls.po assets/locale/controls.pot
+
+msgmerge --update assets/locale/<Код мови>/LC_MESSAGES/dialogs.po  assets/locale/dialogs.pot
+```
+
+Для компіляції перекладів виконайте скрипт [compile.py](assets/locale/compile.py) за допомогою команди (або двічі натиснувши на нього):
+Для Windows:
+``` Bash
+python assets/locale/compile.py
+```
+
+Для Linux та macOS: 
+``` Bash
+python3 assets/locale/compile.py
+```
+
+Після заповнення шаблону можете створити [pull request](https://github.com/AntynK/McBackupper/pulls).
 
 ## Контриб'ютори
 Якщо у вас є ідеї щодо покращення чи бажання долучитися до розвитку проєкту, будь ласка, подайте свій внесок. Відкрийте [CONTRIBUTING.md](CONTRIBUTING.md) для детального ознайомлення.

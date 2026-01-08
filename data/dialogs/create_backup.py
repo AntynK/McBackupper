@@ -11,20 +11,18 @@ _ = Localization().get_handler(Domains.DIALOGS)
 
 
 class CreateBackupDialog(Dialog):
-    def __init__(
-        self, page: ft.Page, world_name: str, after_completion: Callable
-    ) -> None:
-        super().__init__(page=page, title=_("Create backup"))
+    def __init__(self, world_name: str, after_completion: Callable) -> None:
+        super().__init__(title=_("Create backup"))
         self.backup_entry = BackupEntry(Backup(name=world_name))
 
         self.content = ft.Column([self.backup_entry], expand=True)
 
         self.actions = [
             ft.TextButton(_("Create"), on_click=self.create),
-            ft.TextButton(_("Cancel"), on_click=self.close),
+            ft.TextButton(_("Cancel"), on_click=lambda e: self.page.pop_dialog()),
         ]
         self.after_completion = after_completion
 
     def create(self, event=None) -> None:
         self.after_completion(self.backup_entry.get_backup())
-        self.close()
+        self.page.pop_dialog()

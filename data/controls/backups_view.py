@@ -13,7 +13,26 @@ _ = Localization().get_handler(Domains.CONTROLS)
 
 class BackupsView(ft.DataTable):
     def __init__(self, on_select_changed: Callable, on_long_press: Callable) -> None:
-        super().__init__()
+        super().__init__(
+            columns=[
+                ft.DataColumn(
+                    label=ft.Text(_("File name")),
+                    on_sort=partial(self.sort_table, sort_key=SortKeys.NAME),
+                ),
+                ft.DataColumn(
+                    label=ft.Text(_("Title")),
+                    on_sort=partial(self.sort_table, sort_key=SortKeys.TITLE),
+                ),
+                ft.DataColumn(
+                    label=ft.Text(_("Created")),
+                    on_sort=partial(self.sort_table, sort_key=SortKeys.CREATED),
+                ),
+                ft.DataColumn(
+                    label=ft.Text(_("Pool ignore")),
+                    on_sort=partial(self.sort_table, sort_key=SortKeys.POOL_IGNORE),
+                ),
+            ]
+        )
         self.selected_row = None
 
         self.border = ft.Border(
@@ -22,24 +41,6 @@ class BackupsView(ft.DataTable):
             ft.BorderSide(1),
             ft.BorderSide(1),
         )
-        self.columns = [
-            ft.DataColumn(
-                ft.Text(_("File name")),
-                on_sort=partial(self.sort_table, sort_key=SortKeys.NAME),
-            ),
-            ft.DataColumn(
-                ft.Text(_("Title")),
-                on_sort=partial(self.sort_table, sort_key=SortKeys.TITLE),
-            ),
-            ft.DataColumn(
-                ft.Text(_("Created")),
-                on_sort=partial(self.sort_table, sort_key=SortKeys.CREATED),
-            ),
-            ft.DataColumn(
-                ft.Text(_("Pool ignore")),
-                on_sort=partial(self.sort_table, sort_key=SortKeys.POOL_IGNORE),
-            ),
-        ]
         self.rows = []
         self.backups: list[Backup] = []
         self.on_select_changed = on_select_changed
@@ -63,7 +64,6 @@ class BackupsView(ft.DataTable):
                     backup, self._handle_select_change, self.on_long_press, index
                 )
             )
-        self.update()
 
     def set_selected_row(self, row_index: Optional[int]) -> None:
         if self.selected_row is not None:
@@ -75,4 +75,3 @@ class BackupsView(ft.DataTable):
     def _handle_select_change(self, backup: Backup, index: int) -> None:
         self.on_select_changed(backup)
         self.set_selected_row(index)
-        self.update()

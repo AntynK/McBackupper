@@ -7,20 +7,17 @@ from data.controls.clickable_text import ClickableText
 
 
 class WorldView(ft.Column):
-    def __init__(self, page: ft.Page) -> None:
-        super().__init__()
-        self.expand = True
-        self.page = page
+    def __init__(self) -> None:
+        super().__init__(expand=True)
         self.world_name_text = ft.Text(weight=ft.FontWeight.BOLD, size=20)
         self.world_path_text = ClickableText(
             on_click=open_with_explorer, size=15, italic=True
         )
 
-        self.backups_view = BackupsEditor(page)
+        self.backups_view = BackupsEditor()
         self.controls = [self.world_name_text, self.world_path_text, self.backups_view]
 
     def change_world(self, world: McWorld) -> None:
         self.world_name_text.value = world.name
         self.world_path_text.text = str(world.path)
         self.backups_view.change_world(world)
-        self.update()

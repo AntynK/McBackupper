@@ -8,9 +8,7 @@ from data.controls.world_tile import WorldTile
 
 class VersionTile(ft.ExpansionTile):
     def __init__(self, version: McVersion, on_world_clicked: Callable) -> None:
-        super().__init__()
-        self.title = ft.Text(version.name)
-        self.tile_padding = 20
+        super().__init__(title=version.name, tile_padding=20)
         self.controls = [*self.render_worlds(version, on_world_clicked)]
 
     def render_worlds(

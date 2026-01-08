@@ -1,4 +1,5 @@
 from typing import Callable
+
 import flet as ft
 
 from data.backup_manager.backup import Backup
@@ -14,7 +15,7 @@ class BackupDataRow(ft.DataRow):
         index: int,
     ) -> None:
         super().__init__()
-        self.on_select_changed = lambda e: on_select_changed(backup, index)
+        self.on_select_change = lambda e: on_select_changed(backup, index)
         self.on_long_press = lambda e: on_long_press(backup)
 
         self.cells = [

@@ -24,14 +24,19 @@ class BaseTimePicker(ft.Row):
         self.time_factory = time_factory
 
         self.first_field = ft.TextField(
-            width=first_field_width, on_submit=self.check_fields_value
+            width=first_field_width,
+            on_submit=self.check_fields_value,
+            keyboard_type=ft.KeyboardType.NUMBER,
         )
         self.second_field = ft.TextField(
             width=second_field_width,
             on_submit=self.check_fields_value,
+            keyboard_type=ft.KeyboardType.NUMBER,
         )
         self.third_field = ft.TextField(
-            width=third_field_width, on_submit=self.check_fields_value
+            width=third_field_width,
+            on_submit=self.check_fields_value,
+            keyboard_type=ft.KeyboardType.NUMBER,
         )
 
         self.controls = [
@@ -49,7 +54,6 @@ class BaseTimePicker(ft.Row):
         self.current_time = self.time_factory(*self._get_fields_value())
 
         self.update_fields_value()
-        self.update()
 
     def _get_fields_value(self) -> tuple[int, int, int]:
         first = 1

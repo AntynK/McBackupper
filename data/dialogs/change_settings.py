@@ -13,11 +13,13 @@ _ = Localization().get_handler(Domains.DIALOGS)
 
 
 class ChangeSettings(Dialog):
-    def __init__(self, page: ft.Page) -> None:
-        super().__init__(page=page, title=_("Settings"))
-        self.backups_folder_field = PathField(label=_("Backups folder"), page=page)
-        self.mc_folder_field = PathField(label=_("Minecraft folder"), page=page)
-        self.pool_size_entry = ft.TextField(label=_("Pool size"))
+    def __init__(self) -> None:
+        super().__init__(title=_("Settings"))
+        self.backups_folder_field = PathField(label=_("Backups folder"))
+        self.mc_folder_field = PathField(label=_("Minecraft folder"))
+        self.pool_size_entry = ft.TextField(
+            label=_("Pool size"), keyboard_type=ft.KeyboardType.NUMBER
+        )
         self.select_language_dropdown = SelectLanguageDropdown(label=_("Language"))
 
         self.content = ft.Column(
@@ -26,14 +28,21 @@ class ChangeSettings(Dialog):
                 self.mc_folder_field,
                 self.pool_size_entry,
                 self.select_language_dropdown,
-                ft.Text(_("NOTE: language will change after a restart"), weight=ft.FontWeight.BOLD)
-            ]
+                ft.Text(
+                    _("NOTE: language will change after a restart"),
+                    weight=ft.FontWeight.BOLD,
+                ),
+            ],
+            tight=True,
         )
 
         self.actions = [
             ft.TextButton(_("Save"), on_click=self.save),
-            ft.TextButton(_("Cancel"), on_click=self.close),
+            ft.TextButton(_("Cancel"), on_click=lambda e: self.page.pop_dialog()),
         ]
+
+    def did_mount(self):
+        self._update_fields_value()
 
     def save(self, event=None) -> None:
         if not self._validate_backup_folder_path():
@@ -47,12 +56,7 @@ class ChangeSettings(Dialog):
 
         Settings().update_language(self.select_language_dropdown.value)  # type: ignore
 
-        self.close()
-
-    def show(self, event=None) -> None:
-        super().show(event)
-        self._update_fields_value()
-        self.update()
+        self.page.pop_dialog()
 
     def _update_fields_value(self):
         self.backups_folder_field.path = str(Settings().get_backup_folder())
@@ -62,7 +66,7 @@ class ChangeSettings(Dialog):
         self.backups_folder_field.remove_error()
 
         self.pool_size_entry.value = str(Settings().get_pool_size())
-        self.pool_size_entry.error_text = ""
+        self.pool_size_entry.error = None
 
         self.select_language_dropdown.value = Settings().get_language()
 
@@ -91,10 +95,10 @@ class ChangeSettings(Dialog):
             if pool_size <= 0:
                 raise ValueError()
         except ValueError:
-            self.pool_size_entry.error_text = _("Wrong size")
+            self.pool_size_entry.error = _("Wrong size")
             self.pool_size_entry.update()
             return False
-        self.pool_size_entry.error_text = ""
+        self.pool_size_entry.error = None
         self.pool_size_entry.update()
         Settings().update_pool_size(pool_size)
         return True

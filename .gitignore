@@ -4,3 +4,5 @@ settings.json
 *.mo
 venv/
 .vscode/
+build/
+ignore/

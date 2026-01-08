@@ -15,10 +15,8 @@ _ = Localization().get_handler(Domains.CONTROLS)
 
 
 class BackupsEditor(ft.Column):
-    def __init__(self, page: ft.Page) -> None:
-        super().__init__()
-        self.page: ft.Page = page
-        self.expand = True
+    def __init__(self) -> None:
+        super().__init__(expand=True)
         self.scroll = ft.ScrollMode.AUTO
 
         self.backup_view = BackupsView(
@@ -27,20 +25,22 @@ class BackupsEditor(ft.Column):
         self.backup_manager = BackupManager()
 
         self.restore_button = ft.TextButton(
-            _("Restore"), icon=ft.icons.RESTORE, on_click=self._restore_handler
+            _("Restore"), icon=ft.icons.Icons.RESTORE, on_click=self._restore_handler
         )
         self.create_button = ft.TextButton(
             _("Create"),
-            icon=ft.icons.ADD,
-            on_click=self._show_create_popup,
+            icon=ft.icons.Icons.ADD,
+            on_click=lambda e: self.page.show_dialog(
+                CreateBackupDialog(self.current_world.name, self._create_handler)
+            ),
         )
         self.edit_button = ft.TextButton(
             _("Edit"),
-            icon=ft.icons.EDIT,
+            icon=ft.icons.Icons.EDIT,
             on_click=lambda e: self._show_change_backup_menu(),
         )
         self.delete_button = ft.TextButton(
-            _("Delete"), icon=ft.icons.DELETE, on_click=self._delete_handler
+            _("Delete"), icon=ft.icons.Icons.DELETE, on_click=self._delete_handler
         )
         self.disable_all_buttons(True)
         self.controls = [
@@ -60,7 +60,6 @@ class BackupsEditor(ft.Column):
     def update_backup_view(self) -> None:
         self.backup_view.set_backups(self.backup_manager.get_backups())
         self.disable_control_buttons(True)
-        self.update()
 
     def disable_all_buttons(self, state: bool) -> None:
         self.create_button.disabled = state
@@ -80,7 +79,6 @@ class BackupsEditor(ft.Column):
     def _handle_selection_change(self, selected: Backup) -> None:
         self.selected_backup = selected
         self.disable_control_buttons(False)
-        self.update()
 
     def _show_change_backup_menu(self, backup: Optional[Backup] = None) -> None:
         if backup is None:
@@ -88,7 +86,7 @@ class BackupsEditor(ft.Column):
                 return
             backup = self.selected_backup
 
-        ChangeBackup(self.page, backup, self._change_backup_handler).show()
+        self.page.show_dialog(ChangeBackup(backup, self._change_backup_handler))
 
     def _change_backup_handler(self, changed_backup: Backup):
         self.backup_manager.save()
@@ -99,11 +97,6 @@ class BackupsEditor(ft.Column):
             return
         self.backup_manager.delete(self.selected_backup)
         self.update_backup_view()
-
-    def _show_create_popup(self, e) -> None:
-        CreateBackupDialog(
-            self.page, self.current_world.name, self._create_handler
-        ).show()
 
     def _create_handler(self, new_backup: Backup) -> None:
         self.backup_manager.create(new_backup)

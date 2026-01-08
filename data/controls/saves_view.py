@@ -9,8 +9,7 @@ from data.controls.version_tile import VersionTile
 
 class SavesView(ft.ExpansionTile):
     def __init__(self, save: McSave, on_world_clicked: Callable) -> None:
-        super().__init__()
-        self.title = ft.Text(save.name)
+        super().__init__(title=save.name)
         self.controls = [
             *self.render_items(save, on_world_clicked),
         ]

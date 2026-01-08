@@ -12,26 +12,27 @@ _ = Localization().get_handler(Domains.CONTROLS)
 
 class McBackupper(ft.Row):
     def __init__(self, page: ft.Page) -> None:
-        super().__init__()
-        self.expand = True
-        self.page: ft.Page = page
-        self._init_page()
-        self._fill_page()
-        self.page.add(self)
+        super().__init__(expand=True)
+        self._init_page(page)
+        page.add(self)
 
-    def _init_page(self) -> None:
-        self.page.title = _("McBackupper")
-        self.page.window_width = 800
-        self.page.window_height = 600
+    def did_mount(self) -> None:
         self._init_bottom_app_bar()
-        self.page.update()
+        self._fill_page()
+
+    def _init_page(self, page: ft.Page) -> None:
+        page.title = _("McBackupper")
+        page.width = 800
+        page.height = 600
+        page.update()
 
     def _init_bottom_app_bar(self) -> None:
         self.page.bottom_appbar = ft.BottomAppBar(
             content=ft.Row(
                 controls=[
                     ft.IconButton(
-                        icon=ft.icons.SETTINGS, on_click=ChangeSettings(self.page).show
+                        icon=ft.icons.Icons.SETTINGS,
+                        on_click=lambda e: self.page.show_dialog(ChangeSettings()),
                     ),
                 ]
             ),
@@ -46,7 +47,7 @@ class McBackupper(ft.Row):
         versions = McSave(_("versions"))
         versions.load_from_path(mc_folder.joinpath("versions"))
 
-        world_view = WorldView(self.page)
+        world_view = WorldView()
 
         self.controls = [
             ft.Column(

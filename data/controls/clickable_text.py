@@ -11,9 +11,9 @@ class ClickableText(ft.Text):
         italic: Optional[bool] = None,
     ) -> None:
         super().__init__()
-        self.spans: list[ft.TextSpan] = [
+        self.spans: list[ft.TextSpan] = [  # type: ignore
             ft.TextSpan(
-                style=ft.TextStyle(size=size, italic=italic),
+                style=ft.TextStyle(size=size, italic=italic),  # type: ignore
                 on_click=lambda e: on_click(e.control.text),
             )
         ]

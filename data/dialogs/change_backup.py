@@ -11,20 +11,18 @@ _ = Localization().get_handler(Domains.DIALOGS)
 
 
 class ChangeBackup(Dialog):
-    def __init__(
-        self, page: ft.Page, backup: Backup, after_completion: Callable
-    ) -> None:
-        super().__init__(page=page, title=_("Change backup"))
+    def __init__(self, backup: Backup, after_completion: Callable) -> None:
+        super().__init__(title=_("Change backup"))
         self.backup_entry = BackupEntry(backup, True)
 
         self.content = self.backup_entry
 
         self.actions = [
             ft.TextButton(_("Save"), on_click=self.save),
-            ft.TextButton(_("Cancel"), on_click=self.close),
+            ft.TextButton(_("Cancel"), on_click=lambda e: self.page.pop_dialog()),
         ]
         self.after_completion = after_completion
 
     def save(self, event=None) -> None:
         self.after_completion(self.backup_entry.get_backup())
-        self.close()
+        self.page.pop_dialog()
